@@ -18,7 +18,7 @@ class bullet(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.rect.center
         # вычисляем маску для эффективного сравнения
         self.mask = pygame.mask.from_surface(bullet.image)
-        self.x, self.y = xc, yc
+        self.x, self.y = xc + bullet.image.get_width(), yc + bullet.image.get_height()
         self.image = pygame.Surface([25, 50])
         self.mask = pygame.mask.from_surface(bullet.image)
         #self.image.fill(BLACK)
