@@ -67,10 +67,8 @@ pygame.display.set_caption("PONG!")
 lives = 5
 score = 0
 
-MYEVENTTYPE = pygame.USEREVENT + 1
-pygame.time.set_timer(MYEVENTTYPE, 3000)
-for _ in range(random.randrange(1, 4)):
-    enemies.add(Enemy())
+CREATE_ENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(CREATE_ENEMY, 3000)
 
 # Setting up sprite lists
 all_sprites = pygame.sprite.Group()
@@ -81,8 +79,8 @@ pSprite.rect.x = 50
 pSprite.rect.y = 50
 pSprite.x, pSprite.y = pSprite.rect.center
 
-MYEVENTTYPE1 = pygame.USEREVENT + 1
-pygame.time.set_timer(MYEVENTTYPE1, 1000)
+PLAYER_BULLET_EVENT = pygame.USEREVENT + 2
+pygame.time.set_timer(PLAYER_BULLET_EVENT, 1000)
 
 # Creating an enemy
 
@@ -101,10 +99,10 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == MYEVENTTYPE:  # every 3000 frames new enemies are created
+        if event.type == CREATE_ENEMY:  # every 3000 frames new enemies are created
             for _ in range(random.randrange(1, 4)):
                 enemies.add(Enemy())
-        if event.type == MYEVENTTYPE1:
+        if event.type == PLAYER_BULLET_EVENT:
             bullets.add(pSprite.shoot())
 
     keys = pygame.key.get_pressed()
@@ -117,7 +115,7 @@ while run:
     if keys[pygame.K_RIGHT]:
         pSprite.moveRight()
     #if keys[pygame.K_SPACE]:
-        #bullets.add(pSprite.shoot())
+    #    bullets.add(pSprite.shoot())
 
     # ---- Game Logic Here
     if pSprite.rect.x < 0:

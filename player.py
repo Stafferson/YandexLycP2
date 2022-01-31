@@ -42,7 +42,9 @@ class Spaceship(pygame.sprite.Sprite):
         self.y -= distance * math.sin(math.radians(self.angle + 90))
         print(self.x)
         print(self.y)
-
+        print(self.rect.x)
+        print(self.rect.y)
+        print("?????////")
         self.rect.center = round(self.x), round(self.y)
 
     def moveLeft(self):
