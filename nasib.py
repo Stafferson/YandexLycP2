@@ -1,10 +1,8 @@
-import math
 import os
 import sys
 import random
 import pygame
 
-BLACK = (0, 0, 0)
 
 def load_image(name, colorkey=None):  # not sure if this method is needed
     fullname = os.path.join('data', name)
@@ -20,7 +18,7 @@ enemies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 
-class Enemy(pygame.sprite.Sprite):
+class Meteor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.frames = []
@@ -48,7 +46,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         if pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask):
             self.life -= 1
-        if self.life > 0:
+        if self.life > 0 and self.rect.y <= height:
             self.rect = self.rect.move(0, 1)
             self.count += 1
             if self.count % 7 == 0:
@@ -57,60 +55,6 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.kill()
 
-class bullet(pygame.sprite.Sprite):
-    def __init__(self, color, height, width):
-        super().__init__()
-        self.image = pygame.Surface([width, height])
-        self.image.fill(BLACK)
-        self.image.set_colorkey(BLACK)
-
-        # Loading the image for the character
-        self.img = pygame.image.load("data/bullet.png")
-        # creating a copy of the image
-        self.img_orig = self.img.copy()
-        # defining the starting angle of the character image
-        self.angle = 0
-        # obtaining rect details of original image position for collisions etc
-        self.rect = self.img_orig.get_rect()
-        self.x, self.y = self.rect.center
-
-        is_not_destroyed= True
-
-        pygame.draw.rect(self.img_orig, color, [0, 0, 25, 25])
-
-        self.velocity = 5
-
-        while (is_not_destroyed):
-            self.moveForward()
-
-
-    # def draw(screen):
-    # screen.blit(self.img,(self.rect.x, self.rect.y))
-
-    def rotate(self, change_angle):
-        self.angle += change_angle
-        self.img = pygame.transform.rotate(self.img_orig, self.angle)
-        self.rect = self.img.get_rect(center=self.rect.center)
-
-    def move(self, distance):
-        self.x += distance * math.cos(math.radians(self.angle + 90))
-        self.y -= distance * math.sin(math.radians(self.angle + 90))
-
-        self.rect.center = round(self.x), round(self.y)
-
-    def moveLeft(self):
-        self.rotate(5)
-
-    def moveRight(self):
-        self.rotate(-5)
-
-    def moveForward(self):
-        self.move(self.velocity)
-
-    def moveBackward(self):
-        self.move(-self.velocity)
-
-
 
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
@@ -118,14 +62,14 @@ def except_hook(cls, exception, traceback):
 
 if __name__ == '__main__':
     pygame.init()
-    size = width, height = 800, 800 # other parameters may be set in the main game
+    size = width, height = 500, 700  # other parameters may be set in the main game
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     fps = 60
     MYEVENTTYPE = pygame.USEREVENT + 1
     pygame.time.set_timer(MYEVENTTYPE, 3000)
     for _ in range(random.randrange(1, 4)):
-        enemies.add(Enemy())
+        enemies.add(Meteor())
 
     running = True
     while running:
@@ -134,8 +78,7 @@ if __name__ == '__main__':
                 running = False
             if event.type == MYEVENTTYPE:  # every 3000 frames new enemies are created
                 for _ in range(random.randrange(1, 4)):
-                    enemies.add(Enemy())
-
+                    enemies.add(Meteor())
         screen.fill(pygame.Color('blue'))  # in the main game, there will be a background(animated?)
         enemies.draw(screen)
         enemies.update()
