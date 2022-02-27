@@ -5,6 +5,7 @@ import pygame
 from player import Spaceship
 from settings import *
 
+
 def load_image(name, colorkey=None):  # not sure if this method is needed
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
@@ -13,6 +14,7 @@ def load_image(name, colorkey=None):  # not sure if this method is needed
         sys.exit()
     image = pygame.image.load(fullname)  # we can just use this one, cuz we know that pics are ok
     return image
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
@@ -25,9 +27,11 @@ class Enemy(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randrange(WINDOW_W)
         self.rect.y = -1 * self.image.get_height()
-        while pygame.sprite.spritecollideany(self, enemies, pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
+        while pygame.sprite.spritecollideany(self, enemies,
+                                             pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
             self.rect.x = random.randrange(WINDOW_W)
-        while pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
+        while pygame.sprite.spritecollideany(self, bullets,
+                                             pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
             self.rect.x = random.randrange(WINDOW_W)
         self.life = 1
 
@@ -43,7 +47,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         if pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask):
             self.life -= 1
-        if self.life > 0:
+        if self.life > 0 and self.rect.y <= WINDOW_H:
             self.rect = self.rect.move(0, 1)
             self.count += 1
             if self.count % 7 == 0:
@@ -52,9 +56,9 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.kill()
 
+
 enemies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
-
 
 pygame.init()
 
@@ -93,63 +97,103 @@ run = True
 # Clock Setup
 clock = pygame.time.Clock()
 
-### ----- THE GAME -----
 
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-        if event.type == CREATE_ENEMY:  # every 3000 frames new enemies are created
-            for _ in range(random.randrange(1, 4)):
-                enemies.add(Enemy())
-        if event.type == PLAYER_BULLET_EVENT:
-            bullets.add(pSprite.shoot())
+# ----- THE GAME -----
+def game():
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == CREATE_ENEMY:  # every 3000 frames new enemies are created
+                for _ in range(random.randrange(1, 4)):
+                    enemies.add(Enemy())
+            if event.type == PLAYER_BULLET_EVENT:
+                bullets.add(pSprite.shoot())
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP]:
-        pSprite.moveForward()
-    if keys[pygame.K_DOWN]:
-        pSprite.moveBackward()
-    if keys[pygame.K_LEFT]:
-        pSprite.moveLeft()
-    if keys[pygame.K_RIGHT]:
-        pSprite.moveRight()
-    #if keys[pygame.K_SPACE]:
-    #    bullets.add(pSprite.shoot())
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            pSprite.moveForward()
+        if keys[pygame.K_DOWN]:
+            pSprite.moveBackward()
+        if keys[pygame.K_LEFT]:
+            pSprite.moveLeft()
+        if keys[pygame.K_RIGHT]:
+            pSprite.moveRight()
+        # if keys[pygame.K_SPACE]:
+        #    bullets.add(pSprite.shoot())
 
-    # ---- Game Logic Here
-    if pSprite.rect.x < 0:
-        pSprite.rect.x = 0
-        pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
-    if pSprite.rect.x > 750:
-        pSprite.rect.x = 750
-        pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
+        # ---- Game Logic Here
+        if pSprite.rect.x < 0:
+            pSprite.rect.x = 0
+            pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
+        if pSprite.rect.x > 750:
+            pSprite.rect.x = 750
+            pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
 
-    if pSprite.rect.y < 0:
-        pSprite.rect.y = 0
-        pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
-    if pSprite.rect.y > 750:
-        pSprite.rect.y = 750
-        pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
-    pSprite.x, pSprite.y = pSprite.rect.center
+        if pSprite.rect.y < 0:
+            pSprite.rect.y = 0
+            pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
+        if pSprite.rect.y > 750:
+            pSprite.rect.y = 750
+            pSprite.rect = pSprite.img.get_rect(center=pSprite.rect.center)
+        pSprite.x, pSprite.y = pSprite.rect.center
 
-    # --- Drawing Code Here
-    # Reset the screen to blank
-    screen.fill(BLUE)
-    # Draw Play Area
+        # --- Drawing Code Here
+        # Reset the screen to blank
+        screen.fill(BLUE)
+        # Draw Play Area
 
-    # Draw Sprites
-    all_sprites.draw(screen)
-    enemies.draw(screen)
-    bullets.draw(screen)
-    all_sprites.update()
-    enemies.update()
-    bullets.update()
-    screen.blit(pSprite.img, (pSprite.rect.x, pSprite.rect.y))
-    # Text on Screen
+        # Draw Sprites
+        all_sprites.draw(screen)
+        enemies.draw(screen)
+        bullets.draw(screen)
+        all_sprites.update()
+        enemies.update()
+        bullets.update()
+        screen.blit(pSprite.img, (pSprite.rect.x, pSprite.rect.y))
+        # Text on Screen
 
-    # update the screen and show drawings
-    pygame.display.flip()
+        # update the screen and show drawings
+        pygame.display.flip()
 
-    # Control the Clock
-    clock.tick(60)
+        # Control the Clock
+        clock.tick(60)
+
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+
+def start_screen():
+    intro_text = ["SPACESHIP SHOOTER", "",
+                  "Правила игры:", "передвигайтесь по полю с помощью стрелок",
+                  "пуля выпускается каждую секунду: попадайте в астероиды, чтобы получать", "очки",
+                  "но будьте осторожны: важно не задеть  их самим кораблем!",
+                  "(или потеряете жизнь)", "",
+                  "НАЖМИТЕ ПРОБЕЛ, ЧТОБЫ НАЧАТЬ ИГРУ"]
+
+    fon = pygame.transform.scale(load_image('background.jpg'), (WINDOW_W, WINDOW_H))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                game()
+        pygame.display.flip()
+        clock.tick(60)
+
+start_screen()
