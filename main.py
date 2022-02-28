@@ -176,6 +176,8 @@ class Ufo(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask) or \
                 pygame.sprite.spritecollideany(self, players, pygame.sprite.collide_mask):
             self.life -= 1
+        if pygame.sprite.spritecollideany(self, players, pygame.sprite.collide_mask):
+            self.life -= 1
         if self.life > 0 and self.rect.y <= WINDOW_H:
             self.rect = self.rect.move(0, 1)
             self.count += 1
@@ -184,6 +186,14 @@ class Ufo(pygame.sprite.Sprite):
                 self.image = self.frames[self.cur_frame]
         else:
             self.kill()
+
+        if pygame.sprite.collide_mask(self, pSprite):
+            if (pSprite.lives >= 2):
+                pSprite.get_damage(1)
+                self.kill()
+            else:
+                pSprite.get_damage(1)
+                #self.kill();
 
     def for_bullet(self):
         return self.rect.x + (self.rect.w // 2), self.rect.y + (self.rect.h // 2)
@@ -203,6 +213,13 @@ class Ufobullet(pygame.sprite.Sprite):
             self.rect = self.rect.move(0, 5)
         else:
             self.kill()
+        if pygame.sprite.collide_mask(self, pSprite):
+            if (pSprite.lives >= 2):
+                pSprite.get_damage(1)
+                self.kill()
+            else:
+                pSprite.get_damage(1)
+                #self.kill();
 
 
 def except_hook(cls, exception, traceback):
