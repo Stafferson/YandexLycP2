@@ -3,6 +3,9 @@ import sys
 import random
 import pygame
 
+from player import Spaceship
+from settings import RED, WINDOW_W, WINDOW_H
+
 
 def load_image(name, colorkey=None):  # not sure if this method is needed
     fullname = os.path.join('data', name)
@@ -87,10 +90,9 @@ class Ufobullet(pygame.sprite.Sprite):
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
 
-
 if __name__ == '__main__':
     pygame.init()
-    size = width, height = 500, 700  # other parameters may be set in the main game
+    size = width, height = WINDOW_W, WINDOW_H  # other parameters may be set in the main game
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     fps = 60
@@ -101,7 +103,12 @@ if __name__ == '__main__':
         enemies.add(k)
         ufos.add(k)
 
+    pSprite = Spaceship(RED, 25, 25)
+    pSprite.rect.x = 50
+    pSprite.rect.y = 50
+    pSprite.x, pSprite.y = pSprite.rect.center
 
+    players.add(pSprite)
     running = True
     while running:
         for event in pygame.event.get():
@@ -115,9 +122,12 @@ if __name__ == '__main__':
                     for i in ufos:
                         enemies.add(Ufobullet(*i.for_bullet()))
         screen.fill(pygame.Color('blue'))  # in the main game, there will be a background(animated?)
+        players.draw(screen)
+        players.update()
         enemies.draw(screen)
         enemies.update()
         clock.tick(fps)
+        screen.blit(pSprite.img, (pSprite.rect.x, pSprite.rect.y))
         pygame.display.flip()
 
     pygame.quit()
