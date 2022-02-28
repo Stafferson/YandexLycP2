@@ -32,9 +32,9 @@ class Enemy(pygame.sprite.Sprite):
         while pygame.sprite.spritecollideany(self, enemies,
                                              pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
             self.rect.x = random.randrange(WINDOW_W)
-        while pygame.sprite.spritecollideany(self, bullets,
-                                             pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
-            self.rect.x = random.randrange(WINDOW_W)
+        # while pygame.sprite.spritecollideany(self, bullets,
+        #                                      pygame.sprite.collide_mask) or self.rect.x < 0 or self.rect.right > WINDOW_W:
+        #     self.rect.x = random.randrange(WINDOW_W)
         self.life = 1
 
     def cut_sheet(self, sheet, columns, rows):
@@ -173,7 +173,8 @@ class Ufo(pygame.sprite.Sprite):
                     frame_location, self.rect.size)))
 
     def update(self):
-        if pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollideany(self, bullets, pygame.sprite.collide_mask) or \
+                pygame.sprite.spritecollideany(self, players, pygame.sprite.collide_mask):
             self.life -= 1
         if self.life > 0 and self.rect.y <= WINDOW_H:
             self.rect = self.rect.move(0, 1)
@@ -362,6 +363,7 @@ def game1():
         pygame.quit()
         sys.excepthook = except_hook
 
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -372,7 +374,8 @@ def start_screen():
                   "пуля выпускается каждую секунду: попадайте в астероиды, чтобы получать", "очки",
                   "но будьте осторожны: важно не задеть  их самим кораблем!",
                   "(или потеряете жизнь)", "",
-                  "НАЖМИТЕ ПРОБЕЛ, ЧТОБЫ НАЧАТЬ ИГРУ"]
+                  "НАЖМИТЕ 1, ЧТОБЫ НАЧАТЬ ИГРУ С ЛЕГКИМ УРОВНЕМ СЛОЖНОСТИ", "",
+                  "НАЖМИТЕ 2, ЧТОБЫ НАЧАТЬ ИГРУ С ВЫСОКИМ УРОВНЕМ СЛОЖНОСТИ"]
 
     fon = pygame.transform.scale(load_image('background.jpg'), (WINDOW_W, WINDOW_H))
     screen.blit(fon, (0, 0))
@@ -389,12 +392,14 @@ def start_screen():
 
     while True:
         for event in pygame.event.get():
+            keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                game1()
+            elif keys[pygame.K_1]:
+                game()
                 #ufos.game()
+            elif keys[pygame.K_2]:
+                game1()
         pygame.display.flip()
         clock.tick(60)
 
