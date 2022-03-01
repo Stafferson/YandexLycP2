@@ -82,3 +82,11 @@ class Spaceship(pygame.sprite.Sprite):
         self.img_orig = self.img
         self.img = self.img_orig
         #pygame.imag
+
+    def restore(self):
+        self.is_blown = False
+        self.velocity = 5
+        self.lives = 5
+        self.img = pygame.transform.scale(pygame.image.load("data/starship.png").copy(), (50, 50))
+        self.img_orig = self.img
+        self.img = self.img_orig
