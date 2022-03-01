@@ -136,32 +136,6 @@ def end_screen():
         pygame.display.flip()
         clock.tick(60)
 
-def end_screen1():
-    intro_text = ["DIED, NOOB"]
-
-    fon = pygame.transform.scale(load_image('background.jpg'), (WINDOW_W, WINDOW_H))
-    screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
-    text_coord = 50
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                terminate()
-        pygame.display.flip()
-        clock.tick(60)
-
 # Creating an enemy
 
 # Adding sprites to sprite lists
@@ -331,8 +305,6 @@ def game1():
 
 
     if __name__ == '__main__':
-
-        pSprite.restore()
         for _ in range(random.randrange(1, 4)):
             k = Ufo()
             enemies.add(k)
@@ -358,22 +330,14 @@ def game1():
                 print(pSprite.get_number_of_hp())
                 if (pSprite.get_number_of_hp() <= 0):
                     pSprite.die()
-                    end_screen1()
+                    end_screen()
 
             if pygame.sprite.spritecollideany(pSprite, bullets, pygame.sprite.collide_mask):
-                #pSprite.get_damage(1)
+                # pSprite.get_damage(1)
                 print(pSprite.get_number_of_hp())
                 if (pSprite.get_number_of_hp() <= 0):
                     pSprite.die();
                     end_screen()
-
-            if pygame.sprite.spritecollideany(pSprite, enemies, pygame.sprite.collide_mask):
-                pSprite.get_damage(1)
-                print(pSprite.get_number_of_hp())
-                if (pSprite.get_number_of_hp() <= 0):
-                    pSprite.die();
-                    end_screen()
-
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
@@ -446,7 +410,7 @@ def start_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN or \
                     event.type == pygame.MOUSEBUTTONDOWN:
-                game()
+                game1()
                 #ufos.game()
         pygame.display.flip()
         clock.tick(60)
